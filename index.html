@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS Reading Audio Practice - With Questions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .passage-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .passage-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+
+        .passage-card:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .passage-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .reading-area {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .reading-area.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .passage-content {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            line-height: 1.8;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .passage-content h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .passage-content p {
+            margin-bottom: 15px;
+        }
+
+        .questions-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+            border: 3px solid #667eea;
+        }
+
+        .questions-section h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .question-type {
+            margin-bottom: 30px;
+        }
+
+        .question-type h4 {
+            color: #333;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .question {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .question input[type="radio"],
+        .question input[type="text"] {
+            margin-right: 10px;
+        }
+
+        .question input[type="text"] {
+            width: 200px;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .question label {
+            cursor: pointer;
+            display: block;
+            padding: 5px 0;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-block {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .audio-controls {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .results {
+            display: none;
+            background: #d4edda;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            border-left: 5px solid #28a745;
+        }
+
+        .results.active {
+            display: block;
+        }
+
+        .results h3 {
+            color: #155724;
+            margin-bottom: 15px;
+        }
+
+        .score-display {
+            font-size: 2em;
+            font-weight: bold;
+            color: #28a745;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            .passage-selector {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎧 IELTS Reading Practice</h1>
+            <p>Audio + Questions - Complete Practice System</p>
+        </div>
+
+        <div class="content">
+            <!-- Passage Selection -->
+            <div id="passage-selection">
+                <h2 style="margin-bottom: 20px;">Choose a Reading Passage</h2>
+                <div class="passage-selector">
+                    <div class="passage-card" onclick="loadPassage(1)">
+                        <h3>📱 The Digital Revolution</h3>
+                        <p>Impact of smartphones on modern society</p>
+                        <div style="color: #666; font-size: 0.9em; margin-top: 10px;">
+                            ⏱️ 600 words | 13 questions
+                        </div>
+                    </div>
+
+                    <div class="passage-card" onclick="loadPassage(2)">
+                        <h3>🌍 Climate Change Solutions</h3>
+                        <p>Innovative approaches to environmental challenges</p>
+                        <div style="color: #666; font-size: 0.9em; margin-top: 10px;">
+                            ⏱️ 650 words | 13 questions
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reading Area -->
+            <div id="reading-area" class="reading-area">
+                <button class="back-btn" onclick="backToSelection()">⬅️ Back</button>
+
+                <div class="passage-content" id="passage-text"></div>
+
+                <div class="audio-controls">
+                    <h3>🎧 Listen to the Passage</h3>
+                    <div class="control-buttons">
+                        <button class="btn btn-primary" onclick="playAudio()">▶️ Play</button>
+                        <button class="btn btn-primary" onclick="pauseAudio()">⏸️ Pause</button>
+                        <button class="btn btn-primary" onclick="stopAudio()">⏹️ Stop</button>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <label>Speed: <span id="speed-value">1.0x</span></label>
+                        <input type="range" min="0.5" max="2" step="0.1" value="1" 
+                               oninput="updateSpeed(this.value)" style="width: 100%;">
+                    </div>
+                </div>
+
+                <div class="questions-section" id="questions-section"></div>
+
+                <button class="btn btn-success btn-block" onclick="checkAnswers()">
+                    ✅ Check Answers
+                </button>
+
+                <div id="results" class="results"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const passages = {
+            1: {
+                title: "The Digital Revolution",
+                content: `The Digital Revolution
+
+The transformation brought about by digital technology has fundamentally altered nearly every aspect of modern life. From the way we communicate and work to how we access information and entertainment, digital innovation has created unprecedented changes in human society over the past few decades.
+
+The smartphone, perhaps the most visible symbol of this revolution, exemplifies how technology has become deeply integrated into our daily routines. These pocket-sized devices combine the functionality of numerous separate tools—camera, calculator, map, music player, and communication device—into a single, portable unit. This convergence has not only increased convenience but has also changed our expectations about accessibility and connectivity.
+
+In the workplace, digital technology has enabled new forms of collaboration and productivity. Cloud computing allows teams spread across different continents to work on the same projects simultaneously. Video conferencing has reduced the need for business travel while maintaining face-to-face interaction. Artificial intelligence and automation have taken over many routine tasks, allowing human workers to focus on more creative and strategic activities.
+
+The educational sector has undergone similarly dramatic changes. Online learning platforms provide access to courses from prestigious institutions to anyone with an internet connection. Interactive educational software adapts to individual learning styles and paces. Digital libraries give students instant access to millions of books and research papers that would have required days or weeks to obtain in the pre-digital era.
+
+However, these advances have not come without challenges. The digital divide—the gap between those with access to digital technology and those without—has created new forms of inequality. Privacy concerns have intensified as more of our personal information exists in digital form. The addictive nature of digital devices and social media has raised questions about mental health and social connection.
+
+Despite these concerns, the digital revolution shows no signs of slowing. Emerging technologies like virtual reality, quantum computing, and advanced artificial intelligence promise to bring even more profound changes to how we live and work. Understanding and adapting to these changes while addressing their challenges will be crucial for individuals and societies in the coming decades.`,
+                questions: {
+                    matching: {
+                        title: "Questions 1-5: Matching Headings",
+                        instructions: "Choose the correct heading for each paragraph from the list below.",
+                        items: [
+                            { question: "Paragraph 2", answer: "B" },
+                            { question: "Paragraph 3", answer: "E" },
+                            { question: "Paragraph 4", answer: "G" },
+                            { question: "Paragraph 5", answer: "C" },
+                            { question: "Paragraph 6", answer: "F" }
+                        ],
+                        options: [
+                            "A. The cost of digital technology",
+                            "B. Smartphones as symbols of change",
+                            "C. Negative effects of digitalization",
+                            "D. Government regulation needed",
+                            "E. Digital transformation in business",
+                            "F. The future of technology",
+                            "G. Education in the digital age",
+                            "H. Social media problems"
+                        ]
+                    },
+                    tfng: {
+                        title: "Questions 6-10: True/False/Not Given",
+                        instructions: "TRUE if the statement agrees with the information, FALSE if it contradicts, NOT GIVEN if there is no information.",
+                        items: [
+                            { question: "Smartphones have replaced multiple separate devices.", answer: "TRUE" },
+                            { question: "Video conferencing has completely eliminated business travel.", answer: "FALSE" },
+                            { question: "Online courses are only available from expensive universities.", answer: "FALSE" },
+                            { question: "Digital libraries require physical storage space.", answer: "NOT GIVEN" },
+                            { question: "Privacy concerns have decreased with digital technology.", answer: "FALSE" }
+                        ]
+                    },
+                    completion: {
+                        title: "Questions 11-13: Sentence Completion",
+                        instructions: "Complete the sentences below with NO MORE THAN THREE WORDS from the passage.",
+                        items: [
+                            { question: "The _____ refers to the gap between those with and without access to digital technology.", answer: "digital divide" },
+                            { question: "_____ and _____ have taken over many routine workplace tasks.", answer: "artificial intelligence, automation" },
+                            { question: "Emerging technologies include virtual reality, quantum computing, and advanced _____.", answer: "artificial intelligence" }
+                        ]
+                    }
+                }
+            },
+            2: {
+                title: "Climate Change Solutions",
+                content: `Climate Change Solutions: Innovative Approaches
+
+As the reality of climate change becomes increasingly apparent, scientists, engineers, and policymakers around the world are developing innovative solutions to reduce greenhouse gas emissions and adapt to changing environmental conditions. These approaches range from large-scale technological interventions to grassroots community initiatives.
+
+Renewable energy technology has made remarkable progress in recent years. Solar panels have become significantly more efficient and affordable, with costs dropping by over 80% in the last decade. Wind energy has expanded from small-scale projects to massive offshore wind farms capable of powering entire cities. These clean energy sources are increasingly competitive with fossil fuels, making the transition to renewable energy both environmentally and economically viable.
+
+Carbon capture and storage technology represents another promising avenue. These systems can remove carbon dioxide directly from the atmosphere or capture it at the source of emissions, such as power plants or industrial facilities. Once captured, the carbon can be stored underground in geological formations or used to create useful products like building materials or synthetic fuels.
+
+Nature-based solutions have also gained attention as effective climate change mitigation strategies. Reforestation projects not only absorb carbon dioxide but also provide habitat for wildlife and prevent soil erosion. Urban green spaces help reduce the heat island effect in cities while improving air quality and providing recreational areas for residents. Wetland restoration protects coastlines from storm surge while creating important ecosystems for marine life.
+
+Agricultural innovation offers significant potential for reducing emissions while feeding a growing global population. Precision farming techniques use sensors and data analysis to optimize the use of water, fertilizers, and pesticides, reducing waste and environmental impact. Regenerative agriculture practices build soil health and sequester carbon while producing nutritious food.
+
+International cooperation remains essential for addressing climate change effectively. The Paris Agreement brought together nations to commit to limiting global temperature rise, though implementation and enforcement of these commitments continue to face challenges. Technology transfer programs help developing nations adopt clean energy solutions without sacrificing economic development.
+
+Individual actions, while sometimes dismissed as insufficient, collectively make a substantial difference. Energy-efficient appliances, sustainable transportation choices, reduced meat consumption, and conscious consumer decisions all contribute to lowering carbon footprints. When multiplied across millions of people, these personal choices create significant impact.`,
+                questions: {
+                    matching: {
+                        title: "Questions 1-4: Matching Information",
+                        instructions: "Which paragraph contains the following information?",
+                        items: [
+                            { question: "A mention of cost reduction in renewable energy", answer: "B" },
+                            { question: "Reference to storing captured carbon underground", answer: "C" },
+                            { question: "Examples of individual environmental actions", answer: "G" },
+                            { question: "Discussion of farming technology improvements", answer: "E" }
+                        ]
+                    },
+                    mcq: {
+                        title: "Questions 5-8: Multiple Choice",
+                        instructions: "Choose the correct letter, A, B, C or D.",
+                        items: [
+                            {
+                                question: "According to the passage, solar panel costs have:",
+                                options: ["A. Increased by 80%", "B. Decreased by 80%", "C. Remained stable", "D. Doubled"],
+                                answer: "B"
+                            },
+                            {
+                                question: "Nature-based solutions include all of the following EXCEPT:",
+                                options: ["A. Reforestation", "B. Urban green spaces", "C. Carbon capture technology", "D. Wetland restoration"],
+                                answer: "C"
+                            },
+                            {
+                                question: "The passage suggests that individual actions are:",
+                                options: ["A. Completely ineffective", "B. The only solution needed", "C. Collectively significant", "D. Too expensive"],
+                                answer: "C"
+                            },
+                            {
+                                question: "The Paris Agreement aims to:",
+                                options: ["A. Eliminate all emissions", "B. Limit global temperature rise", "C. Ban fossil fuels", "D. Fund renewable energy"],
+                                answer: "B"
+                            }
+                        ]
+                    },
+                    summary: {
+                        title: "Questions 9-13: Summary Completion",
+                        instructions: "Complete the summary using words from the box below.",
+                        items: [
+                            { question: "Renewable energy, particularly solar and wind, has become more _____ in recent years.", answer: "affordable" },
+                            { question: "Carbon capture technology can store CO2 _____ or use it for products.", answer: "underground" },
+                            { question: "Precision farming uses _____ to reduce waste.", answer: "sensors" },
+                            { question: "Wetland restoration helps protect _____ from storms.", answer: "coastlines" },
+                            { question: "The passage emphasizes the importance of both _____ cooperation and individual action.", answer: "international" }
+                        ],
+                        wordBank: ["underground", "affordable", "sensors", "coastlines", "expensive", "international", "local", "cameras"]
+                    }
+                }
+            }
+        };
+
+        let currentUtterance = null;
+        let currentSpeed = 1.0;
+        let currentPassageId = null;
+        let userAnswers = {};
+
+        function loadPassage(id) {
+            currentPassageId = id;
+            const passage = passages[id];
+            userAnswers = {};
+            
+            document.getElementById('passage-text').innerHTML = `
+                <h2>${passage.title}</h2>
+                ${passage.content.split('\n\n').map(p => `<p>${p}</p>`).join('')}
+            `;
+            
+            generateQuestions(passage.questions);
+            
+            document.getElementById('passage-selection').classList.add('hidden');
+            document.getElementById('reading-area').classList.add('active');
+            document.getElementById('results').classList.remove('active');
+        }
+
+        function generateQuestions(questions) {
+            let html = '';
+            let questionNum = 1;
+
+            // Matching Headings / Information
+            if (questions.matching) {
+                html += `
+                    <div class="question-type">
+                        <h4>${questions.matching.title}</h4>
+                        <p style="margin-bottom: 15px; color: #666;">${questions.matching.instructions}</p>
+                        ${questions.matching.options ? `
+                            <div style="background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                                ${questions.matching.options.map(opt => `<div>${opt}</div>`).join('')}
+                            </div>
+                        ` : ''}
+                        ${questions.matching.items.map((item, idx) => `
+                            <div class="question">
+                                <strong>Question ${questionNum++}:</strong> ${item.question}<br>
+                                <input type="text" id="q${questionNum-1}" placeholder="Your answer" 
+                                       data-answer="${item.answer}" data-type="matching">
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // True/False/Not Given
+            if (questions.tfng) {
+                html += `
+                    <div class="question-type">
+                        <h4>${questions.tfng.title}</h4>
+                        <p style="margin-bottom: 15px; color: #666;">${questions.tfng.instructions}</p>
+                        ${questions.tfng.items.map((item, idx) => `
+                            <div class="question">
+                                <strong>Question ${questionNum++}:</strong> ${item.question}<br>
+                                <label><input type="radio" name="q${questionNum-1}" value="TRUE" data-answer="${item.answer}"> TRUE</label>
+                                <label><input type="radio" name="q${questionNum-1}" value="FALSE" data-answer="${item.answer}"> FALSE</label>
+                                <label><input type="radio" name="q${questionNum-1}" value="NOT GIVEN" data-answer="${item.answer}"> NOT GIVEN</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // Multiple Choice
+            if (questions.mcq) {
+                html += `
+                    <div class="question-type">
+                        <h4>${questions.mcq.title}</h4>
+                        <p style="margin-bottom: 15px; color: #666;">${questions.mcq.instructions}</p>
+                        ${questions.mcq.items.map((item, idx) => `
+                            <div class="question">
+                                <strong>Question ${questionNum++}:</strong> ${item.question}<br>
+                                ${item.options.map(opt => `
+                                    <label><input type="radio" name="q${questionNum-1}" value="${opt[0]}" data-answer="${item.answer}"> ${opt}</label>
+                                `).join('')}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // Completion
+            if (questions.completion) {
+                html += `
+                    <div class="question-type">
+                        <h4>${questions.completion.title}</h4>
+                        <p style="margin-bottom: 15px; color: #666;">${questions.completion.instructions}</p>
+                        ${questions.completion.items.map((item, idx) => `
+                            <div class="question">
+                                <strong>Question ${questionNum++}:</strong> ${item.question}<br>
+                                <input type="text" id="q${questionNum-1}" placeholder="Your answer" 
+                                       data-answer="${item.answer}" data-type="completion" style="width: 100%; max-width: 400px;">
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // Summary
+            if (questions.summary) {
+                html += `
+                    <div class="question-type">
+                        <h4>${questions.summary.title}</h4>
+                        <p style="margin-bottom: 15px; color: #666;">${questions.summary.instructions}</p>
+                        ${questions.summary.wordBank ? `
+                            <div style="background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                                <strong>Word Bank:</strong> ${questions.summary.wordBank.join(', ')}
+                            </div>
+                        ` : ''}
+                        ${questions.summary.items.map((item, idx) => `
+                            <div class="question">
+                                <strong>Question ${questionNum++}:</strong> ${item.question}<br>
+                                <input type="text" id="q${questionNum-1}" placeholder="Your answer" 
+                                       data-answer="${item.answer}" data-type="summary">
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            document.getElementById('questions-section').innerHTML = html;
+        }
+
+        function checkAnswers() {
+            const inputs = document.querySelectorAll('#questions-section input');
+            let correct = 0;
+            let total = 0;
+            let feedback = '<h3>Your Results</h3>';
+
+            inputs.forEach((input, index) => {
+                const correctAnswer = input.dataset.answer;
+                let userAnswer = '';
+
+                if (input.type === 'radio' && input.checked) {
+                    userAnswer = input.value;
+                    total++;
+                } else if (input.type === 'text' && input.value.trim()) {
+                    userAnswer = input.value.trim();
+                    total++;
+                }
+
+                if (userAnswer) {
+                    const isCorrect = checkAnswer(userAnswer, correctAnswer);
+                    if (isCorrect) {
+                        correct++;
+                        input.style.borderColor = '#28a745';
+                    } else {
+                        input.style.borderColor = '#dc3545';
+                    }
+                }
+            });
+
+            const percentage = Math.round((correct / total) * 100);
+            const band = calculateBand(percentage);
+
+            feedback += `
+                <div class="score-display">
+                    ${correct} / ${total} Correct (${percentage}%)
+                </div>
+                <p style="text-align: center; font-size: 1.2em;">
+                    <strong>Estimated Band Score: ${band}</strong>
+                </p>
+                <p style="margin-top: 15px;">
+                    ${percentage >= 85 ? '🎉 Excellent work!' : 
+                      percentage >= 70 ? '👍 Good job!' : 
+                      percentage >= 50 ? '📚 Keep practicing!' : 
+                      '💪 Review the passage and try again!'}
+                </p>
+            `;
+
+            document.getElementById('results').innerHTML = feedback;
+            document.getElementById('results').classList.add('active');
+        }
+
+        function checkAnswer(userAnswer, correctAnswer) {
+            const user = userAnswer.toLowerCase().trim();
+            const correct = correctAnswer.toLowerCase().trim();
+            
+            // Exact match
+            if (user === correct) return true;
+            
+            // For multi-word answers, check if all words match (order may vary)
+            const userWords = user.split(/[\s,]+/).sort();
+            const correctWords = correct.split(/[\s,]+/).sort();
+            
+            if (userWords.length === correctWords.length) {
+                return userWords.every((word, idx) => word === correctWords[idx]);
+            }
+            
+            return false;
+        }
+
+        function calculateBand(percentage) {
+            if (percentage >= 90) return '9.0';
+            if (percentage >= 85) return '8.5';
+            if (percentage >= 80) return '8.0';
+            if (percentage >= 75) return '7.5';
+            if (percentage >= 70) return '7.0';
+            if (percentage >= 65) return '6.5';
+            if (percentage >= 60) return '6.0';
+            if (percentage >= 55) return '5.5';
+            return '5.0';
+        }
+
+        function playAudio() {
+            if (currentUtterance && speechSynthesis.paused) {
+                speechSynthesis.resume();
+                return;
+            }
+            
+            const text = passages[currentPassageId].content;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            currentUtterance.rate = currentSpeed;
+            speechSynthesis.speak(currentUtterance);
+        }
+
+        function pauseAudio() {
+            if (speechSynthesis.speaking) {
+                speechSynthesis.pause();
+            }
+        }
+
+        function stopAudio() {
+            speechSynthesis.cancel();
+        }
+
+        function updateSpeed(value) {
+            currentSpeed = parseFloat(value);
+            document.getElementById('speed-value').textContent = value + 'x';
+        }
+
+        function backToSelection() {
+            stopAudio();
+            document.getElementById('passage-selection').classList.remove('hidden');
+            document.getElementById('reading-area').classList.remove('active');
+        }
+    </script>
+</body>
+</html>
